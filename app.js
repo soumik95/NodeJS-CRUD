@@ -7,13 +7,13 @@ const db=mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'nodemysql'
+    database: 'nodemysql1'
 });
 
 //connect
 db.connect((err)=>{
     if(err){
-        console.log('DB Connection Error');
+         console.log('DB Connection Error');
          console.log(err);
     }
     else{
@@ -25,10 +25,11 @@ const app=express();
 
 //Create DB
 app.get('/createdb',(req,res) => {
-    let sql='CREATE DATABASE nodemysql';
+    let sql='CREATE DATABASE nodemysql1';
     db.query(sql,(err,result)=>{
         if(err){
             console.log('DB Create Error');
+            console.log(err);
         }
         else{
             console.log(result);
@@ -39,10 +40,14 @@ app.get('/createdb',(req,res) => {
 
 //Create Table
 app.get('/createtable',(req,res)=> {
-    let sql='CREATE TABLE posts(id int AUTO_INCREMENT, title VARCHAR(250),body(VARCHAR), PRIMARY KEY (id))';
+    res.send('DB Table Create Call');
+    console.log('DB Table Create Call');
+
+    let sql='CREATE TABLE posts(id int AUTO_INCREMENT, title VARCHAR(250),body VARCHAR(50), PRIMARY KEY (id))';
     db.query(sql,(err,result)=>{
         if(err){
             console.log('Table Create Error');
+            console.log(err);
         }
         else{
             console.log(result);
@@ -55,8 +60,8 @@ app.get('/createtable',(req,res)=> {
 //Insert posts
 app.get('/addpost',(req,res)=> {
     let post = {
-        title: 'Post 1',
-        body: 'MY FIRST POST'
+        title: 'Post 3',
+        body: 'MY third POST'
     };
     let sql='INSERT INTO posts SET ?';
     let query= db.query(sql,post,(err,result)=>{
@@ -80,16 +85,18 @@ app.get('/getpost',(req,res)=> {
         else{
             console.log(results);
             res.send('Data fetched');
+           // console.log(results[1].body);
         }
     });
 }); 
 
 //GET by value
 app.get('/getpost/:id',(req,res)=> {
-    let sql=`SELECT * from posts WHERE id = ${req.param.id}`;
-    let query= db.query(sql,(err,result)=>{
+    var myid= req.params.id;
+    let query= db.query('SELECT * from posts WHERE id =?',myid,(err,result)=>{
         if(err){
             console.log('Get DATA Error');
+            console.log(err);
         }
         else{
             console.log(result);
@@ -97,6 +104,7 @@ app.get('/getpost/:id',(req,res)=> {
         }
     });
 }); 
+
 
 //Update Post
 app.get('/updatepost/:id',(req,res)=> {
